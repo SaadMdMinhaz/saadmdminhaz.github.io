@@ -1,20 +1,45 @@
-// Mobile navigation toggle
+// Mobile navigation
 const navToggle = document.getElementById("navToggle");
 const navLinks = document.getElementById("navLinks");
+const navBar = document.querySelector(".site-header");
 const year = document.getElementById("year");
+const isMobileMenuOpen = () => navLinks.classList.contains("open");
+const closeMenu = () => {
+  navLinks.classList.remove("open");
+  navToggle.setAttribute("aria-expanded", "false");
+};
 
 if (navToggle && navLinks) {
-  navToggle.addEventListener("click", () => {
+  navToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
     const isOpen = navLinks.classList.toggle("open");
     navToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
   });
 
-  // Close menu when a navigation link is clicked (mobile)
+  // Close when a nav link is clicked
   navLinks.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      navLinks.classList.remove("open");
-      navToggle.setAttribute("aria-expanded", "false");
-    });
+    link.addEventListener("click", closeMenu);
+  });
+
+  // Close when clicking anywhere outside the header (mobile)
+  document.addEventListener("click", (e) => {
+    if (navBar && !navBar.contains(e.target) && isMobileMenuOpen()) {
+      closeMenu();
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && isMobileMenuOpen()) {
+      closeMenu();
+    }
+  });
+
+  // Close automatically when the user scrolls / browses the page
+  window.addEventListener("scroll", () => {
+    if (isMobileMenuOpen()) {
+      closeMenu();
+    }
   });
 }
 
